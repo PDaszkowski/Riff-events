@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Users Management - RiffEvents</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/organizer.css}"> </head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
+<div class="main-content" style="padding-top: 100px;">
+    <div class="header-actions" style="margin-bottom: 30px;">
+        <h1>System Users</h1>
+    </div>
+
+    <table class="event-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Date of registration</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}" style="font-weight: bold;"></td>
+            <td th:text="${user.email}"></td>
+            <td>
+                <span class="status-badge" th:text="${user.role}"></span>
+            </td>
+            <td th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd.MM.yyyy') : 'No data'}"></td>
+            <td>
+                <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post"
+                      onsubmit="return confirm('Are you sure to delete permanently this user? It can influence events connected with that user.')">
+                    <button type="submit" class="btn-delete"
+                            style="background-color: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        Usuń
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

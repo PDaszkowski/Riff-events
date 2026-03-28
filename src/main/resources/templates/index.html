@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - RiffEvents</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
+
+<section class="featured-section">
+    <h2>Tickets for the best rock/metal events in Poland!</h2>
+
+    <div th:if="${upcomingEvents.isEmpty()}" style="text-align: center; color: #888; padding: 40px;">
+        <p>No events planned for the next 3 months.</p>
+    </div>
+
+    <div class="featured-grid" th:unless="${upcomingEvents.isEmpty()}">
+        <div class="event-card" th:each="event : ${upcomingEvents}">
+            <div class="event-image">
+                <img th:if="${event.imageUrl != null}" th:src="${event.imageUrl}" alt="Event poster">
+                <span th:if="${event.imageUrl == null}">🎸</span>
+            </div>
+            <div class="event-info">
+                <div class="event-date" th:text="${#temporals.format(event.date, 'dd MMMM yyyy')}"></div>
+                <div class="event-title" th:text="${event.title}"></div>
+                <div class="event-venue">📍 <span th:text="${event.venue.name}"></span> - <span th:text="${event.venue.city}"></span></div>
+                <a href="/events" class="btn btn-small">Details →</a>
+            </div>
+        </div>
+    </div>
+
+    <a href="/events" class="btn btn-center">All events →</a>
+</section>
+
+
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <h3 th:text="${totalEvents}"></h3>
+            <p>Available events</p>
+        </div>
+        <div class="stat-item">
+            <h3 th:text="${totalArtists}"></h3>
+            <p>Incredible artists</p>
+        </div>
+        <div class="stat-item">
+            <h3>20,000+</h3>
+            <p>Satisfied fans</p>
+        </div>
+        <div class="stat-item">
+            <h3 th:text="${totalVenues}"></h3>
+            <p>Venues</p>
+        </div>
+    </div>
+</section>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

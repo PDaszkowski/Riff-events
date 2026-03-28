@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Artists</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/artists.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+<div class="main-content">
+    <div class="artists-grid">
+        <div class="artist-card" th:each="artist : ${artists}">
+            <div class="artist-image">
+                <img th:src="${artist.imageUrl}" alt="Artist image">
+                <form th:action="@{/artists/favorite/{id}(id=${artist.id})}" method="post" class="favorite-form">
+                    <button type="submit" class="fav-btn"
+                            th:title="${isFavoriteMap.get(artist.id) ? 'Delete from favorites' : 'Add to favorites'}">
+                        <span th:text="${isFavoriteMap.get(artist.id)} ? '❤️' : '🤍'"></span>
+                    </button>
+                </form>
+            </div>
+            <h3 th:text="${artist.name}"></h3>
+            <p class="genre">🎵 <span th:text="${artist.genre}"></span></p>
+            <p class="bio" th:text="${artist.bio}"></p>
+        </div>
+    </div>
+</div>
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Opinie - [[${event.title}]]</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/reviews.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+<main class="reviews-container">
+    <div class="event-header-mini">
+        <img th:src="${event.imageUrl}" alt="Event Image">
+        <div>
+            <h1 th:text="${event.title}">Event title</h1>
+            <p th:text="${#temporals.format(event.date, 'dd MMMM yyyy, HH:mm')}"></p>
+            <p th:text="${event.venue.name} + ' - ' + ${event.venue.city}"></p>
+        </div>
+    </div>
+
+    <section class="add-review-section">
+        <div th:if="${canReview}" class="review-form-card">
+            <h3>Add your opinion</h3>
+            <form th:action="@{/events/{id}/reviews(id=${event.id})}" method="post">
+                <label>Your review:</label><br>
+                <select name="rating" class="rating-select" required>
+                    <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                    <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                    <option value="3">⭐⭐⭐ (3/5)</option>
+                    <option value="2">⭐⭐ (2/5)</option>
+                    <option value="1">⭐ (1/5)</option>
+                </select>
+
+                <textarea name="comment" class="comment-area" maxlength="500"
+                          placeholder="Share your experience from event..." required></textarea>
+
+                <button type="submit" class="submit-review-btn">Publish opinion</button>
+            </form>
+        </div>
+
+        <div th:unless="${canReview}" class="no-access-msg">
+            <p th:if="${#authorization.expression('isAuthenticated()')}">
+                Only users that had ticket to this event can publish review about it.
+            </p>
+            <p th:unless="${#authorization.expression('isAuthenticated()')}">
+                Log in to add review
+            </p>
+        </div>
+    </section>
+
+    <section class="reviews-list">
+        <h3 style="margin-bottom: 20px;">Users reviews (<span th:text="${reviews.size()}">0</span>)</h3>
+
+        <div th:if="${reviews.size() == 0}" style="color: #666; text-align: center; margin-top: 30px;">
+            There are no reviews connected to this event.
+        </div>
+
+        <div th:each="review : ${reviews}" class="review-item">
+            <div class="review-meta">
+                <span th:text="${review.user.name}">User</span>
+                <span th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy')}">Date</span>
+            </div>
+            <div class="stars">
+                <span th:each="i : ${#numbers.sequence(1, review.rating)}">⭐</span>
+            </div>
+            <p style="margin-top: 10px; line-height: 1.6;" th:text="${review.comment}">Comment...</p>
+        </div>
+    </section>
+</main>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

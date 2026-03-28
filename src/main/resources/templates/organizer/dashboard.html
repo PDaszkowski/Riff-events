@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Organizatora - RiffEvents</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/organizer.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
+<div class="main-content">
+    <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1>Welcome, <span th:text="${organizerName}">Organizer</span>! 👋</h1>
+        <a href="/events/new" class="hero-btn" style="text-decoration: none;">Add new event</a>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <h3>Sold tickets</h3>
+            <div class="value" th:text="${totalSold}">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Total revenue</h3>
+            <div class="value" th:text="${totalRevenue} + ' PLN'">0.00 PLN</div>
+        </div>
+        <div class="stat-card">
+            <h3>Average participation</h3>
+            <div class="value" th:text="${averageAttendance} + '%'">0%</div>
+        </div>
+    </div>
+
+    <h2>Your events</h2>
+    <table class="event-table">
+        <thead>
+        <tr>
+            <th>Event</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Sales</th>
+            <th>Revenue</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="event : ${events}">
+            <td th:text="${event.title}" style="font-weight: bold;"></td>
+            <td th:text="${#temporals.format(event.date, 'dd.MM.yyyy')}"></td>
+            <td>
+                <span th:class="'status-badge ' + ${event.status}" th:text="${event.status}"></span>
+            </td>
+            <td>
+                <div class="progress-bar">
+                    <div class="progress-fill"
+                         th:style="'width: ' + (${event.totalTickets > 0} ? (${event.soldTickets} * 100 / ${event.totalTickets}) : 0) + '%'">
+                    </div>
+                </div>
+                <span th:text="${event.soldTickets} + '/' + ${event.totalTickets}"></span>
+            </td>
+            <td th:text="${event.generatedRevenue} + ' PLN'"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

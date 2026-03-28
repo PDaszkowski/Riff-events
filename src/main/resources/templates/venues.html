@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Venues</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+<div class="main-content">
+    <h1 style="color: #ca150c;">Venues</h1>
+    <div th:each="venue : ${venues}" style="background: #1e1e1e; padding: 20px; border-radius: 8px; border-left: 5px solid #ca150c;">
+        <h3 th:text="${venue.name}" style="color: white;"></h3>
+        <p style="color: #aaa;">City: <span th:text="${venue.city}"></span></p>
+        <p style="color: #aaa;">Address: <span th:text="${venue.address}"></span></p>
+        <p style="color: #ffaa33; font-weight: bold;">Capacity: <span th:text="${venue.capacity}"></span> people</p>
+        <a th:href="'https://www.google.com/maps/search/?api=1&query='
+            + ${venue.name} + '+' + ${venue.city}"
+           target="_blank"
+           style="color: #ca150c; text-decoration: none; font-weight: bold;">
+            Check on Google Maps
+        </a>
+
+    </div>
+</div>
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

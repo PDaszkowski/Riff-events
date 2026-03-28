@@ -1,0 +1,16 @@
+{
+  "id": "evt_test_webhook_6",
+  "object": "event",
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_session_6",
+      "object": "checkout.session",
+      "metadata": {
+        "userId": "6",
+        "eventId": "3",
+        "quantity": "1"
+      }
+    }
+  }
+}

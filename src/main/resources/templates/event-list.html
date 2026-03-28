@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Koncerty - RiffEvents</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/events.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
+<section class="hero-section" th:style="${featuredEvent != null ? 'background-image: url(' + featuredEvent.imageUrl + ')' : 'background-image: url(/img/background.png)'}">
+    <div class="hero-content" th:if="${featuredEvent != null}">
+        <h1 th:text="${featuredEvent.title}">Nazwa Koncertu</h1>
+        <p th:text="${#temporals.format(featuredEvent.date, 'dd MMMM yyyy HH:mm')} + ' | ' + ${featuredEvent.venue.city}">Date and venue</p>
+        <div class="hero-buttons">
+            <a href="/events" class="hero-btn">Buy ticket</a>
+        </div>
+    </div>
+</section>
+
+<div class="events-container">
+    <aside class="filters-sidebar">
+        <h3>Fiters</h3>
+
+        <form id="filterForm" method="get" action="/events">
+            <div class="search-box">
+                <label>Search for an event</label>
+                <input type="text" name="search"
+                       th:value="${selectedSearch}"
+                       placeholder="np. Metallica" id="searchInput">
+            </div>
+            <div class="filter-group">
+                <h4>Status</h4>
+                <div class="filter-option">
+                    <input type="checkbox" id="status-published" name="status" value="PUBLISHED"
+                           th:checked="${selectedStatuses != null and selectedStatuses.contains('PUBLISHED')}">
+                    <label for="status-published">Published</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="status-draft" name="status" value="DRAFT"
+                           th:checked="${selectedStatuses != null and selectedStatuses.contains('DRAFT')}">
+                    <label for="status-draft">Draft version</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h4>City</h4>
+                <div class="filter-option" th:each="venue : ${venues}">
+                    <input type="checkbox"
+                           th:id="'city-' + ${venue.id}"
+                           name="city"
+                           th:value="${venue.city}"
+                           th:checked="${selectedCities != null and selectedCities.contains(venue.city)}">
+                    <label th:for="'city-' + ${venue.id}" th:text="${venue.city}"></label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h4>Favorite Artists</h4>
+                <div th:each="artist : ${myFavorites}">
+                    <input type="checkbox" name="artistIds" th:value="${artist.id}"
+                           th:checked="${selectedArtists != null && selectedArtists.contains(artist.id)}">
+                    <label th:text="${artist.name}"></label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h4>History</h4>
+                <div class="filter-option">
+                    <input type="checkbox" id="showPast" name="showPast" value="true"
+                           th:checked="${showPast}" onchange="this.form.submit()">
+                    <label for="showPast">Show past events</label>
+                </div>
+            </div>
+
+            <div class="filter-actions" style="display: flex; flex-direction: column; gap: 10px;">
+                <button type="submit" class="filter-btn">Filter</button>
+                <a href="/events" class="reset-btn" style="text-decoration: none; text-align: center;">Reset filters</a>
+            </div>
+        </form>
+    </aside>
+
+    <section class="events-section">
+        <div class="events-header">
+            <h1>Upcoming events</h1>
+            <div class="events-count" th:text="${events.size() + ' events found'}"></div>
+        </div>
+
+        <div th:if="${events.isEmpty()}" class="no-events">
+            <h2>No events</h2>
+            <p>Change filters or comeback later</p>
+        </div>
+
+        <div th:if="${param.payment != null and param.payment[0] == 'success'}"
+             style="background-color: #4CAF50; color: white; padding: 15px; margin: 20px 0; border-radius: 5px; text-align: center;">
+            🎉 Payment successful! Your ticket has been sent to your email.
+        </div>
+        <div th:if="${param.payment != null and param.payment[0] == 'cancel'}"
+             style="background-color: #f44336; color: white; padding: 15px; margin: 20px 0; border-radius: 5px; text-align: center;">
+            Payment has been canceled.
+        </div>
+        <div class="events-grid" th:unless="${events.isEmpty()}">
+            <div th:each="event : ${events}" class="event-card">
+                <div class="event-image-wrapper">
+                    <img th:src="${event.imageUrl}" alt="Event poster">
+                    <span class="status-badge" th:text="${event.status}"></span>
+                </div>
+                <div class="event-info">
+                    <div class="event-date" th:text="${#temporals.format(event.date, 'dd.MM.yyyy HH:mm')}">01.01.2024</div>
+                    <div class="event-title" th:text="${event.title}"></div>
+                    <div class="event-details">
+                        📍 <span th:text="${event.venue.name}"></span>, <span th:text="${event.venue.city}"></span>
+                    </div>
+                    <div class="event-details" style="font-size: 11px;">
+                        <span th:text="${'Organizer: ' + event.organizer.name}"></span>
+                    </div>
+                    <div class="lineup">
+                        Line-up:
+                        <span th:each="ea, iterStat : ${event.eventArtists}">
+                        <span th:text="${ea.artist.name}"></span><span th:if="${!iterStat.last}">, </span>
+                        </span>
+                    </div>
+                    <div style="margin: 8px 0;">
+                        <label style="font-size: 12px;">Tickets:</label>
+                        <input type="number"
+                               min="1"
+                               th:max="${event.totalTickets - event.soldTickets}"
+                               value="1"
+                               th:id="'qty-' + ${event.id}"
+                               style="width: 100%; padding: 5px;">
+                    </div>
+
+                    <button th:if="${event.date.isAfter(now)}"
+                            th:onclick="'handlePayment(' + ${event.id} + ')'"
+                            sec:authorize="isAuthenticated()"
+                            class="buy-ticket-btn"
+                            style="width: 100%; border: none; cursor: pointer;">
+                        🎫 Buy ticket
+                    </button>
+
+                    <a th:if="${event.date.isAfter(now)}"
+                       th:href="@{'/auth/login'}"
+                       sec:authorize="!isAuthenticated()"
+                       class="buy-ticket-btn">
+                        🎫 Log in to buy
+                    </a>
+
+                    <a th:if="${event.date.isBefore(now)}"
+                       th:href="@{'/events/' + ${event.id} + '/reviews'}"
+                       class="buy-ticket-btn"
+                       style="background-color: #555; text-decoration: none; text-align: center; display: block;">
+                        💬 Users opinions
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+<script>
+    async function handlePayment(eventId) {
+
+        const qtyInput = document.getElementById(`qty-${eventId}`);
+        const quantity = parseInt(qtyInput.value);
+
+        if (!quantity || quantity < 1) {
+            alert("Invalid ticket quantity");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/payments/checkout/${eventId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ quantity })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                window.location.href = data.url;
+            } else if (response.status === 401) {
+                window.location.href = '/auth/login';
+            } else {
+                const error = await response.text();
+                alert(error);
+            }
+
+        } catch (e) {
+            alert("Server error");
+        }
+    }
+</script>
+
+
+</body>
+</html>

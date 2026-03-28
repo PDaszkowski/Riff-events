@@ -1,0 +1,163 @@
+body {
+    background-image: url('/img/background3.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+.featured-section {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 30px;
+}
+
+.featured-section h2 {
+    font-size: 36px;
+    color: white;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.event-card {
+    background: #000000;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #300011;
+    transition: 0.3s;
+}
+
+.event-card:hover {
+    border-color: #ca150c;
+    transform: translateY(-5px);
+}
+
+.event-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-bottom: 2px solid white;
+}
+
+
+.event-info {
+    padding: 20px;
+}
+
+.event-date {
+    color: #ca150c;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.event-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.event-venue {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.stats-section {
+    background: #000000;
+    padding: 60px 30px;
+    text-align: center;
+    margin: 50px 0;
+}
+
+.stats-grid {
+    max-width: 1000px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+}
+
+.stat-item h3 {
+    font-size: 32px;
+    color: #ca150c;
+    margin-bottom: 10px;
+}
+
+.stat-item p {
+    color: white;
+}
+
+.btn {
+    background: #000000;
+    color: white;
+    padding: 15px 40px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.btn:hover {
+    background: #ff6600;
+    transform: translateY(-3px);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 2px solid #ca150c;
+    color: #ca150c;
+}
+
+.btn-secondary:hover {
+    background: #ca150c;
+    color: white;
+}
+
+.btn-small {
+    margin-top: 10px;
+    padding: 8px 20px;
+    font-size: 14px;
+}
+
+.btn-center {
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .featured-section h2 {
+        font-size: 24px;
+    }
+
+    .featured-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .stat-item h3 {
+        font-size: 24px;
+    }
+}

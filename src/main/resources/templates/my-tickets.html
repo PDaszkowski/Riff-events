@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My tickets - RiffEvents</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/tickets.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
+<div class="main-content">
+    <div class="tickets-container">
+        <h1 style="color: #ca150c; margin-bottom: 30px;">Your purchased tickets</h1>
+
+        <div th:if="${tickets.isEmpty()}">
+            <p style="color: #aaa;">You have no tickets. <a href="/events" style="color: #ca150c;">Buy ticket for an event!</a></p>
+        </div>
+
+        <div th:each="ticket : ${tickets}" class="ticket-card">
+            <div class="ticket-info">
+                <h3 th:text="${ticket.event.title}">Event name</h3>
+                <div class="ticket-details">
+                    <p>📍 <span th:text="${ticket.event.venue.name + ', ' + ticket.event.venue.city}"></span></p>
+                    <p>📅 <span th:text="${#temporals.format(ticket.event.date, 'dd MMMM yyyy, HH:mm')}"></span></p>
+                    <p>Owner: <span th:text="${ticket.user.name}"></span></p>
+                    <span class="status-badge" th:text="${ticket.status}">PAID</span>
+                </div>
+            </div>
+
+            <div class="ticket-qr">
+                <img th:src="'data:image/png;base64,' + ${ticket.qrCodeBase64}" alt="QR Code">
+                <span>Code to enter</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

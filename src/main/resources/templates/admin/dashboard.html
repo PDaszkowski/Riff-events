@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - RiffEvents</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/organizer.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
+<div class="main-content">
+    <div class="header-actions" style="margin-bottom: 30px;">
+        <h1>Admin Panel</h1>
+        <p>Manage all events and users of the system.</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <h3>All events</h3>
+            <div class="value" th:text="${totalEvents}">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Combined revenue (System)</h3>
+            <div class="value" th:text="${totalRevenue} + ' PLN'">0.00 PLN</div>
+        </div>
+        <div class="stat-card">
+            <h3>Sold tickets</h3>
+            <div class="value" th:text="${totalTicketsSold}">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Users</h3>
+            <div class="value" th:text="${totalUsers}">0</div>
+        </div>
+    </div>
+
+    <h2>All events in the system</h2>
+    <table class="event-table">
+        <thead>
+        <tr>
+            <th>Concert</th>
+            <th>Organizer</th> <th>Data</th>
+            <th>Status</th>
+            <th>Revenue</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="event : ${events}">
+            <td th:text="${event.title}" style="font-weight: bold;"></td>
+            <td th:text="${event.organizer.username}">Organizer name</td>
+            <td th:text="${#temporals.format(event.date, 'dd.MM.yyyy')}"></td>
+            <td>
+                <span th:class="'status-badge ' + ${event.status}" th:text="${event.status}"></span>
+            </td>
+            <td th:text="${event.generatedRevenue} + ' PLN'"></td>
+            <td>
+                <form th:action="@{/admin/events/delete/{id}(id=${event.id})}" method="post"
+                      onsubmit="return confirm('Are you sure to delete this event permanently?')">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>
