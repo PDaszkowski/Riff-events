@@ -58,6 +58,7 @@ After successfull payment, user receives email message with QR-code ticket attac
 ---
 
 ERD Diagram:
+<img width="1446" height="1088" alt="image" src="https://github.com/user-attachments/assets/badffd9a-9759-48b2-8f94-ea3f1d879c3b" />
 
 
 **Build**
